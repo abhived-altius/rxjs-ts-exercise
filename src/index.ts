@@ -1,4 +1,5 @@
 import { SrvRecord } from "dns";
+import { interval,map } from "rxjs";
 
 interface Car
 {
@@ -25,4 +26,19 @@ function getRandomCar(): Car
     };
 }
 
-console.log(getRandomCar());
+
+const Observable1 = interval(1500).pipe(
+    map(()=>getRandomCar())
+);
+
+const sub = Observable1.subscribe(car =>
+{
+    console.log("New car has been created:",car);
+}
+);
+
+setTimeout(()=>
+{
+    sub.unsubscribe();
+    console.log('Stopped generating cars.');
+},7500);

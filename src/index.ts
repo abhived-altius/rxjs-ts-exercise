@@ -1,5 +1,6 @@
 import { SrvRecord } from "dns";
-import { interval,map,filter, Observable } from "rxjs";
+import { interval,map,filter, Observable, switchMap } from "rxjs";
+import {fromFetch} from "rxjs/fetch";
 
 interface Car
 {
@@ -50,9 +51,17 @@ const Observable3: Observable<Scrap> = Observable2.pipe(
     }))
 );
 
-Observable3.subscribe(scrap =>
+const Observable4 = interval(1000).pipe(
+    switchMap(()=>
+        fromFetch("https://randomuser.me/api/").pipe(
+            switchMap(response => response.json())
+        )
+    )
+);
+
+Observable4.subscribe(user =>
 {
-    console.log("New scrap has been created:",scrap);
+    console.log("Random user from the API:",user);
 }
 );
 

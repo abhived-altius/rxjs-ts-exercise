@@ -1,5 +1,5 @@
 import { SrvRecord } from "dns";
-import { interval,map,filter } from "rxjs";
+import { interval,map,filter, Observable } from "rxjs";
 
 interface Car
 {
@@ -8,6 +8,12 @@ interface Car
     yearOfRelease:  number;
     brand:String;
     color:String;
+}
+
+interface Scrap
+{
+    brand: String;
+    yearOfRelease: number;
 }
 
 function getRandomCar(): Car
@@ -27,17 +33,26 @@ function getRandomCar(): Car
 }
 
 
-const Observable1 = interval(1500).pipe(
+const Observable1: Observable<Car> = interval(1500).pipe(
     map(()=>getRandomCar())
 );
 
-const Observable2 = Observable1.pipe(
+const Observable2: Observable<Car> = Observable1.pipe(
     filter(car => car.color === 'black' && car.yearOfRelease<2000)
 );
 
-const sub = Observable2.subscribe(car =>
+
+
+const Observable3: Observable<Scrap> = Observable2.pipe(
+    map(car => ({
+        brand: car.brand,
+        yearOfRelease: car.yearOfRelease
+    }))
+);
+
+Observable3.subscribe(scrap =>
 {
-    console.log("New car has been created:",car);
+    console.log("New scrap has been created:",scrap);
 }
 );
 

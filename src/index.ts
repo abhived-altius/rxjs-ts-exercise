@@ -1,5 +1,5 @@
 import { SrvRecord } from "dns";
-import { interval,map,filter, Observable, switchMap } from "rxjs";
+import { interval,map,filter, Observable, switchMap, concatMap } from "rxjs";
 import {fromFetch} from "rxjs/fetch";
 
 interface Car
@@ -59,7 +59,15 @@ const Observable4 = interval(1000).pipe(
     )
 );
 
-Observable4.subscribe(user =>
+const Observable5 = interval(100).pipe(
+    concatMap(()=>
+        fromFetch("https://randomuser.me/api/").pipe(
+            switchMap(response => response.json())
+        )
+    )
+);
+
+Observable5.subscribe(user =>
 {
     console.log("Random user from the API:",user);
 }

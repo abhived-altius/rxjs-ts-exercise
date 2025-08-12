@@ -1,5 +1,5 @@
 import { SrvRecord } from "dns";
-import { interval,map } from "rxjs";
+import { interval,map,filter } from "rxjs";
 
 interface Car
 {
@@ -31,14 +31,18 @@ const Observable1 = interval(1500).pipe(
     map(()=>getRandomCar())
 );
 
-const sub = Observable1.subscribe(car =>
+const Observable2 = Observable1.pipe(
+    filter(car => car.color === 'black' && car.yearOfRelease<2000)
+);
+
+const sub = Observable2.subscribe(car =>
 {
     console.log("New car has been created:",car);
 }
 );
 
-setTimeout(()=>
-{
-    sub.unsubscribe();
-    console.log('Stopped generating cars.');
-},7500);
+// setTimeout(()=>
+// {
+//     sub.unsubscribe();
+//     console.log('Stopped generating cars.');
+// },7500);
